@@ -22,6 +22,7 @@ public class ServerManager
     private Queue<String> fromPhoneCommandList = new LinkedList<>();
     private Queue<String> fromDeviceCommandList = new LinkedList<>();
 
+
     public ServerManager(int port) throws IOException
     {
         socket = new ServerSocket(port);
@@ -53,17 +54,33 @@ public class ServerManager
 
                 var sender = jsonObject.get("sender").getAsString();
 
-                if(sender.equals("phone"))
-                {
+                if(sender.equals("phone")) {
                     //폰에게서 받은 처리
                     var command = jsonObject.get("cmd").getAsString();
 
-                    if(command.equals("notify"))
-                    {
+                    if (command.equals("notify")) {
                         client.close();
                         fromPhoneCommandList.add("notify");
                         log("notify 커맨드 등록(fromPhone)");
                         continue;
+                    }
+                    else if(command.equals("check"))
+                    {
+                        log("check");
+                        if(fromDeviceCommandList.isEmpty())
+                        {
+                            log("비어있음");
+                            client.getOutputStream().write("no".getBytes("UTF-8"));
+                            client.close();
+                            continue;
+                        }
+                        else if(fromDeviceCommandList.poll().equals("notify"))
+                        {
+                            var outputStream= client.getOutputStream();
+                            outputStream.write("notify".getBytes("UTF-8"));
+                            client.close();
+                            continue;
+                        }
                     }
                 }
                 else if(sender.equals("device"))
@@ -87,6 +104,12 @@ public class ServerManager
                             client.close();
                             continue;
                         }
+                    }else if (command.equals("notify"))
+                    {
+                        client.close();
+                        fromDeviceCommandList.add("notify");
+                        log("notify 커맨드 등록(fromDevice)");
+                        continue;
                     }
                 }
                 else
