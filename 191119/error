@@ -1,0 +1,9 @@
+@시간: Tue Nov 19 15:50:41 KST 2019 ## check
+error
+java.lang.IndexOutOfBoundsException
+	at java.base/java.io.FileOutputStream.writeBytes(Native Method)
+	at java.base/java.io.FileOutputStream.write(FileOutputStream.java:348)
+	at java.base/java.io.BufferedOutputStream.write(BufferedOutputStream.java:123)
+	at com.selab.ServerManager.run(ServerManager.java:198)
+	at com.selab.Main.main(Main.java:11)
+## Server is running
